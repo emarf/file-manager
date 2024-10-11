@@ -1,5 +1,5 @@
-import readline from 'readline';
-import os from 'os';
+import readline from 'node:readline';
+import os from 'node:os';
 import { initCdCommand } from './src/basicCommands/cdCommand.js';
 import { initLsCommand } from './src/basicCommands/lsCommand.js';
 import { initCatCommand } from './src/basicCommands/catCommand.js';
@@ -8,6 +8,7 @@ import { initRnCommand } from './src/basicCommands/rnCommand.js';
 import { initCpCommand } from './src/basicCommands/cpCommand.js';
 import { initMvCommand } from './src/basicCommands/mvCommand.js';
 import { initRmCommand } from './src/basicCommands/rmCommand.js';
+import { getOsInfo } from './src/osCommands/os.js';
 
 const getCurrentWorkingDirectory = () => {
   return process.cwd();
@@ -27,7 +28,7 @@ const exitProcess = () => {
   process.exit();
 }
 
-const commands = ['.exit', 'up', 'cd', 'ls', 'cat', 'add', 'rn', 'cp', 'mv', 'rm'];
+const commands = ['.exit', 'up', 'cd', 'ls', 'cat', 'add', 'rn', 'cp', 'mv', 'rm', 'os'];
 
 rl.on('line', (input) => {
   const [command, ...args] = input.split(' ');
@@ -75,6 +76,10 @@ rl.on('line', (input) => {
 
   if (command === 'rm') {
     initRmCommand(args);
+  }
+
+  if (command === 'os') {
+    getOsInfo(args[0]);
   }
 
   console.log(`You are currently in ${getCurrentWorkingDirectory()}`);
