@@ -1,4 +1,7 @@
 import readline from 'readline';
+import os from 'os';
+import { initCdCommand } from './src/basicCommands/cdCommand.js';
+import { initLsCommand } from './src/basicCommands/lsCommand.js';
 
 const getCurrentWorkingDirectory = () => {
   return process.cwd();
@@ -7,6 +10,7 @@ const getCurrentWorkingDirectory = () => {
 const argv = process.argv.slice(2);
 const username = argv[0].split('=')[1];
 
+process.chdir(os.homedir());
 console.log(`Welcome to the File Manager, ${username}!`);
 console.log(`You are currently in ${getCurrentWorkingDirectory()}`);
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
@@ -17,25 +21,33 @@ const exitProcess = () => {
   process.exit();
 }
 
-rl.on('line', (input) => {
-  console.log(`You are currently in ${getCurrentWorkingDirectory()}`);
-  const trimmedInput = input.trim();
+const commands = ['.exit', 'up', 'cd', 'ls']
 
-  if (trimmedInput === '.exit') {
+rl.on('line', (input) => {
+  const [command, ...args] = input.split(' ');
+
+  if (!commands.includes(command)) {
+    console.log('Invalid input');
+    return;
+  }
+
+  if (command === '.exit') {
     exitProcess();
   }
 
-  if (trimmedInput.startsWith('cd')) {
-    console.log('before', process.cwd());
-    process.chdir('./src');
-    console.log('after', process.cwd());
+  if (command === 'up') {
+    process.chdir('..');
   }
 
-  if (trimmedInput === 'ls') {
-    console.log('ls');
+  if (command === 'cd') {
+    initCdCommand(args);
   }
 
-  console.log('input', input)
+  if (command === 'ls') {
+    initLsCommand()
+  }
+
+  console.log(`You are currently in ${getCurrentWorkingDirectory()}`);
 });
 
 
