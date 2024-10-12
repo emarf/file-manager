@@ -10,6 +10,8 @@ import { initMvCommand } from './src/basicCommands/mvCommand.js';
 import { initRmCommand } from './src/basicCommands/rmCommand.js';
 import { getOsInfo } from './src/osCommands/os.js';
 import { initHashCommand } from './src/hashCommand.js';
+import { initCompressCommand } from './src/zlibCommands/compressCommand.js';
+import { initDecompressCommand } from './src/zlibCommands/decompressCommand.js';
 
 const getCurrentWorkingDirectory = () => {
   return process.cwd();
@@ -29,9 +31,9 @@ const exitProcess = () => {
   process.exit();
 }
 
-const commands = ['.exit', 'up', 'cd', 'ls', 'cat', 'add', 'rn', 'cp', 'mv', 'rm', 'os', 'hash'];
+const commands = ['.exit', 'up', 'cd', 'ls', 'cat', 'add', 'rn', 'cp', 'mv', 'rm', 'os', 'hash', 'compress', 'decompress'];
 
-rl.on('line', (input) => {
+rl.on('line', async (input) => {
   const [command, ...args] = input.split(' ');
 
   if (!commands.includes(command)) {
@@ -85,6 +87,14 @@ rl.on('line', (input) => {
 
   if (command === 'hash') {
     initHashCommand(args);
+  }
+
+  if (command === 'compress') {
+    await initCompressCommand(args);
+  }
+
+  if (command === 'decompress') {
+    await initDecompressCommand(args);
   }
 
   console.log(`You are currently in ${getCurrentWorkingDirectory()}`);
