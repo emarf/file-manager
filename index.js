@@ -9,6 +9,7 @@ import { initCpCommand } from './src/basicCommands/cpCommand.js';
 import { initMvCommand } from './src/basicCommands/mvCommand.js';
 import { initRmCommand } from './src/basicCommands/rmCommand.js';
 import { getOsInfo } from './src/osCommands/os.js';
+import { initHashCommand } from './src/hashCommand.js';
 
 const getCurrentWorkingDirectory = () => {
   return process.cwd();
@@ -28,7 +29,7 @@ const exitProcess = () => {
   process.exit();
 }
 
-const commands = ['.exit', 'up', 'cd', 'ls', 'cat', 'add', 'rn', 'cp', 'mv', 'rm', 'os'];
+const commands = ['.exit', 'up', 'cd', 'ls', 'cat', 'add', 'rn', 'cp', 'mv', 'rm', 'os', 'hash'];
 
 rl.on('line', (input) => {
   const [command, ...args] = input.split(' ');
@@ -80,6 +81,10 @@ rl.on('line', (input) => {
 
   if (command === 'os') {
     getOsInfo(args[0]);
+  }
+
+  if (command === 'hash') {
+    initHashCommand(args);
   }
 
   console.log(`You are currently in ${getCurrentWorkingDirectory()}`);
