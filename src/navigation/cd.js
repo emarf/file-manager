@@ -1,6 +1,7 @@
 import path from 'node:path';
+import { logErrorMessage } from '../logger.js';
 
-export const initCdCommand = (args) => {
+export const initCd = (args) => {
   try {
     if (!args || args.length === 0) {
       console.log('Invalid input');
@@ -10,9 +11,7 @@ export const initCdCommand = (args) => {
     const dirPath = args[0];
     const absolutePath = path.isAbsolute(dirPath) ? dirPath : path.resolve(process.cwd(), dirPath);
     process.chdir(absolutePath);
-
   } catch (error) {
-    console.error(error);
-    console.log('Operation failed')
+    logErrorMessage(error);
   }
 }

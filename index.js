@@ -1,103 +1,57 @@
-import readline from 'node:readline';
 import os from 'node:os';
-import { initCdCommand } from './src/basicCommands/cdCommand.js';
-import { initLsCommand } from './src/basicCommands/lsCommand.js';
-import { initCatCommand } from './src/basicCommands/catCommand.js';
-import { initAddCommand } from './src/basicCommands/addCommand.js';
-import { initRnCommand } from './src/basicCommands/rnCommand.js';
-import { initCpCommand } from './src/basicCommands/cpCommand.js';
-import { initMvCommand } from './src/basicCommands/mvCommand.js';
-import { initRmCommand } from './src/basicCommands/rmCommand.js';
-import { getOsInfo } from './src/osCommands/os.js';
-import { initHashCommand } from './src/hashCommand.js';
-import { initCompressCommand } from './src/zlibCommands/compressCommand.js';
-import { initDecompressCommand } from './src/zlibCommands/decompressCommand.js';
+import readline from 'node:readline';
+import { initHash } from './src/crypto/index.js';
+import { initAdd, initCat, initCp, initLs, initMv, initRm, initRn } from './src/file-system/index.js';
+import { getCurrentWorkingDirectory } from './src/helpers.js';
+import { logCurrentDirectory, logExitMessage, logInvalidInput, logWelcomeMessage } from './src/logger.js';
+import { initCd, initUp } from './src/navigation/index.js';
+import { getOsInfo } from './src/operation-system/index.js';
+import { initCompress, initDecompress } from './src/zlib/index.js';
 
-const getCurrentWorkingDirectory = () => {
-  return process.cwd();
-}
+
 
 const argv = process.argv.slice(2);
-const username = argv[0].split('=')[1];
+const username = argv[0]?.split('=')[1] ?? 'Anonymous';
 
 process.chdir(os.homedir());
-console.log(`Welcome to the File Manager, ${username}!`);
-console.log(`You are currently in ${getCurrentWorkingDirectory()}`);
+const currentWorkingDirectory = getCurrentWorkingDirectory();
+logWelcomeMessage(username, currentWorkingDirectory);
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
 
 const exitProcess = () => {
-  console.log(`Thank you for using File Manager, ${username}, goodbye!`);
+  logExitMessage(username);
   process.exit();
 }
 
-const commands = ['.exit', 'up', 'cd', 'ls', 'cat', 'add', 'rn', 'cp', 'mv', 'rm', 'os', 'hash', 'compress', 'decompress'];
+const commandMap = {
+  '.exit': () => exitProcess(),
+  'up': async () => await initUp(),
+  'cd': async (args) => await initCd(args),
+  'ls': async () => await initLs(),
+  'cat': async (args) => await initCat(args),
+  'add': async (args) => await initAdd(args),
+  'rn': async (args) => await initRn(args),
+  'cp': async (args) => await initCp(args),
+  'mv': async (args) => await initMv(args),
+  'rm': async (args) => await initRm(args),
+  'os': async (args) => await getOsInfo(args[0]),
+  'hash': async (args) => await initHash(args),
+  'compress': async (args) => await initCompress(args),
+  'decompress': async (args) => await initDecompress(args)
+};
 
 rl.on('line', async (input) => {
-  const [command, ...args] = input.split(' ');
+  const [command, ...args] = input.trim().split(' ');
+  const handler = commandMap[command];
 
-  if (!commands.includes(command)) {
-    console.log('Invalid input');
-    return;
+  if (!handler) {
+    logInvalidInput();
+  } else {
+    await handler(args).then(() => {
+      logCurrentDirectory(getCurrentWorkingDirectory())
+    });
   }
-
-  if (command === '.exit') {
-    exitProcess();
-  }
-
-  if (command === 'up') {
-    process.chdir('..');
-  }
-
-  if (command === 'cd') {
-    initCdCommand(args);
-  }
-
-  if (command === 'ls') {
-    initLsCommand()
-  }
-
-  if (command === 'cat') {
-    initCatCommand(args);
-  }
-
-  if (command === 'add') {
-    initAddCommand(args);
-  }
-
-  if (command === 'rn') {
-    initRnCommand(args);
-  }
-
-  if (command === 'cp') {
-    initCpCommand(args);
-  }
-
-  if (command === 'mv') {
-    initMvCommand(args);
-  }
-
-  if (command === 'rm') {
-    initRmCommand(args);
-  }
-
-  if (command === 'os') {
-    getOsInfo(args[0]);
-  }
-
-  if (command === 'hash') {
-    initHashCommand(args);
-  }
-
-  if (command === 'compress') {
-    await initCompressCommand(args);
-  }
-
-  if (command === 'decompress') {
-    await initDecompressCommand(args);
-  }
-
-  console.log(`You are currently in ${getCurrentWorkingDirectory()}`);
 });
 
 

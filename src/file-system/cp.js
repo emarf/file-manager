@@ -1,8 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { pipeline } from 'stream/promises';
+import { logErrorMessage } from '../logger.js';
 
-export const initCpCommand = async (args) => {
+export const initCp = async (args) => {
   try {
     if (!args || args.length === 0) {
       console.log('Invalid input');
@@ -18,7 +19,6 @@ export const initCpCommand = async (args) => {
 
     await pipeline(readableStream, writableStream);
   } catch (error) {
-    console.error(error);
-    console.log('Operation failed')
+    logErrorMessage(error);
   }
 }  

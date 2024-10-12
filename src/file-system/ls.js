@@ -1,11 +1,12 @@
 import fs from 'node:fs/promises';
+import { logErrorMessage } from '../logger.js';
 
 const readTypes = {
   file: "file",
   directory: "directory",
 };
 
-export const initLsCommand = async () => {
+export const initLs = async () => {
   try {
     const currentDirectory = process.cwd();
     const files = await fs.readdir(currentDirectory, { withFileTypes: true });
@@ -23,7 +24,6 @@ export const initLsCommand = async () => {
 
     console.table(table);
   } catch (error) {
-    console.error(error);
-    console.log('Operation failed')
+    logErrorMessage(error);
   }
 }

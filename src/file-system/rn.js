@@ -1,7 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { logErrorMessage } from '../logger.js';
 
-export const initRnCommand = async (args) => {
+export const initRn = async (args) => {
   try {
     if (!args || args.length === 0) {
       console.log('Invalid input');
@@ -18,10 +19,9 @@ export const initRnCommand = async (args) => {
     if (stats.isDirectory()) {
       throw error;
     }
-    
+
     await fs.rename(resolvedPath, resolvedNewName);
   } catch (error) {
-    console.error(error);
-    console.log('Operation failed')
+    logErrorMessage(error);
   }
 }

@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
+import { logErrorMessage } from '../logger.js';
 
-export const initRmCommand = async (args) => {
+export const initRm = async (args) => {
   try {
     if (!args || args.length === 0) {
       console.log('Invalid input');
@@ -10,7 +11,6 @@ export const initRmCommand = async (args) => {
 
     await fs.unlink(filePath);
   } catch (error) {
-    console.error(error);
-    console.log('Operation failed')
+    logErrorMessage(error);
   }
 }

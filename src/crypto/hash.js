@@ -1,8 +1,9 @@
 import fs from 'node:fs';
 import crypto from 'crypto';
 import path from 'node:path';
+import { logErrorMessage } from '../logger.js';
 
-export const initHashCommand = (args) => {
+export const initHash = (args) => {
   try {
     if (!args || args.length === 0) {
       console.log('Invalid input');
@@ -25,7 +26,6 @@ export const initHashCommand = (args) => {
     });
 
   } catch (error) {
-    console.error(error);
-    console.log('Operation failed');
+    logErrorMessage(error);
   }
 };

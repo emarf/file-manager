@@ -2,7 +2,9 @@ import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import { pipeline } from 'stream/promises';
-export const initMvCommand = async (args) => {
+import { logErrorMessage } from '../logger.js';
+
+export const initMv = async (args) => {
   try {
     if (!args || args.length === 0) {
       console.log('Invalid input');
@@ -19,7 +21,6 @@ export const initMvCommand = async (args) => {
     await pipeline(readableStream, writableStream);
     await fsPromises.unlink(filePath);
   } catch (error) {
-    console.error(error);
-    console.log('Operation failed')
+    logErrorMessage(error)
   }
 }
