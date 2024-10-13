@@ -1,4 +1,5 @@
 import os from 'node:os';
+import { checkArgs } from '../helpers.js';
 
 const osInfoMap = new Map([
   ['--EOL', () => {
@@ -25,14 +26,12 @@ const osInfoMap = new Map([
 ]);
 
 export const getOsInfo = (arg) => {
-  if (!arg) {
-    console.log('Invalid input');
+  if (!checkArgs(arg)) {
     return;
   }
 
   const handler = osInfoMap.get(arg);
 
-  // !TODO think about how to handle invalid input
   if (handler) {
     handler();
   } else {

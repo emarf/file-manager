@@ -48,10 +48,10 @@ rl.on('line', async (input) => {
   if (!handler) {
     logInvalidInput();
   } else {
-    await handler(args).then(() => {
-      logCurrentDirectory(getCurrentWorkingDirectory())
-    });
+    await handler(args);
   }
+
+  logCurrentDirectory(getCurrentWorkingDirectory())
 });
 
 

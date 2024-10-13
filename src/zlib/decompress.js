@@ -1,16 +1,23 @@
 import fs from 'node:fs';
+import fsPromises from 'node:fs/promises';
 import path from 'node:path';
-import zlib from 'node:zlib';
 import { pipeline } from 'node:stream/promises';
+import zlib from 'node:zlib';
+import { checkArgs } from '../helpers.js';
 import { logErrorMessage } from '../logger.js';
 
 export const initDecompress = async (args) => {
   try {
-    if (!args || args.length === 0) {
-      console.log('Invalid input');
+    if (!checkArgs(args)) {
       return;
     }
+
     const [filePath, destDir] = args;
+
+    const stats = await fsPromises.stat(filePath).catch(() => null);
+    if (!stats || !stats.isFile()) {
+      throw new Error('File does not exist');
+    }
 
     const readableStream = fs.createReadStream(filePath);
     const writableStream = fs.createWriteStream(`${destDir}/${path.basename(filePath, '.br')}`);

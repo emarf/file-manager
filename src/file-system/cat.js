@@ -1,19 +1,25 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { pipeline } from 'node:stream/promises';
 import { logErrorMessage } from '../logger.js';
+import { checkArgs } from '../helpers.js';
 
 export const initCat = async (args) => {
   try {
-    if (!args || args.length === 0) {
-      console.log('Invalid input');
+    if (!checkArgs(args)) {
       return;
     }
+
     const [filePath] = args;
     const resolvedPath = path.resolve(filePath);
     const readableStream = fs.createReadStream(resolvedPath);
-    // !TODO check behavior of stdout
-    await pipeline(readableStream, process.stdout);
+
+    readableStream.on('data', (chunk) => {
+      console.log(chunk.toString());
+    });
+
+    readableStream.on('error', (error) => {
+      logErrorMessage(error);
+    });
   } catch (error) {
     logErrorMessage(error);
   }

@@ -1,12 +1,13 @@
 import fs from 'node:fs/promises';
+import { checkArgs } from '../helpers.js';
 import { logErrorMessage } from '../logger.js';
 
 export const initRm = async (args) => {
   try {
-    if (!args || args.length === 0) {
-      console.log('Invalid input');
+    if (!checkArgs(args)) {
       return;
     }
+    
     const [filePath] = args;
 
     await fs.unlink(filePath);
